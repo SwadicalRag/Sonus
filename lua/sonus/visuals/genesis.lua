@@ -67,7 +67,7 @@ end
 
 function VIS:DrawBars(amount,start)
     local lp = Sonus.lib.LowPassFilter(self.audioData.EnergiesArray,self.bars,amount,start)
-    Sonus.lib.Smooth(lp,5)
+    Sonus.lib.SmoothFilter(lp,5)
 
     local width = math.floor(ScrW()/self.bars)
 
