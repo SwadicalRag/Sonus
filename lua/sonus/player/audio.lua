@@ -8,6 +8,7 @@ function Sonus.Player:PlayURL(url,callback)
             self:Stop()
             self.ActiveStation = station
             self.ChannelProcessor = Sonus.lib.NewChannelProcessor(station)
+            station:SetVolume(self:GetVolume())
             station:Play()
             Sonus.Player.event:emit("Playing")
 
@@ -28,6 +29,20 @@ function Sonus.Player:Play()
     if IsValid(Sonus.Player.ActiveStation) then
         Sonus.Player.ActiveStation:Play()
     end
+end
+
+function Sonus.Player:GetVolume()
+    return self.Volume or 1
+end
+
+function Sonus.Player:SetVolume(vol)
+    self.Volume = vol
+
+    if IsValid(self.ActiveStation) then
+        self.ActiveStation:SetVolume(vol)
+    end
+
+    self.event:emit("VolumeUpdate")
 end
 
 function Sonus.Player:IsPlaying()

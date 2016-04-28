@@ -253,7 +253,7 @@ end
 
 local AudioMetadata = vgui.Create("DLabel",AudioControl)
 AudioMetadata:SetPos(160,0)
-AudioMetadata:SetSize(430,50)
+AudioMetadata:SetSize(310,50)
 AudioMetadata:SetFont("DermaLarge")
 AudioMetadata:SetColor(Color(255,255,255))
 function AudioMetadata:UpdateText()
@@ -338,6 +338,31 @@ end
 function NextButton:DoClick()
     Sonus.Player:NextTrack()
 end
+
+local VolumeSlider = vgui.Create("DNumSlider",AudioControl)
+VolumeSlider:SetPos(480,10)
+VolumeSlider:SetSize(120,30)
+VolumeSlider.TextArea:SetTextColor(Color(255,255,255))
+VolumeSlider.TextArea:SetText("100%")
+-- VolumeSlider:SetDecimals(1)
+VolumeSlider.Slider:SetImageColor(255,255,255)
+function VolumeSlider:OnValueChanged(val)
+    self.TextArea:SetText(string.format("%02d%%",val*100))
+
+    if self:IsEditing() then
+        Sonus.Player:SetVolume(val)
+    end
+end
+function VolumeSlider:PerformLayout()
+    self.Label:SetWide(0)
+end
+
+VolumeSlider:SetValue(Sonus.Player:GetVolume())
+Sonus.Player.event:on("VolumeUpdate",function(vol)
+    if not VolumeSlider:IsEditing() then
+        VolumeSlider:SetValue(Sonus.Player:GetVolume())
+    end
+end)
 
 local Scrub = vgui.Create("DNumSlider",AudioControl)
 Scrub:SetPos(10,50)

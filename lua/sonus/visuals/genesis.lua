@@ -47,40 +47,6 @@ function VIS:DrawItems()
     self.items = items
 end
 
-function VIS:LPFilter(tbl,amt,len,from)
-    len = len or #tbl
-    local entries = math.floor(len/amt + 0.5)
-
-    local out = {0}
-
-    for i=from,from+len-1 do
-        if i % entries == 0 then
-            out[#out] = out[#out]/entries
-            out[#out + 1] = 0
-        else
-            out[#out] = out[#out] + tbl[i]
-        end
-    end
-
-    if len % entries ~= 0 then
-        out[#out] = out[#out]/(#tbl % entries)
-    else
-        out[#out] = nil
-    end
-
-    for i=1,5 do
-        self:Smooth(out)
-    end
-
-    return out
-end
-
-function VIS:Smooth(array)
-    for i=2,#array-1 do
-        array[i] = (array[i-1] + array[i] + array[i+1])/3
-    end
-end
-
 VIS.event:on("Bass.peak",function(...)
     for i=1,10 do
         VIS:AddItem()
@@ -100,7 +66,9 @@ function draw.RotatedBox(x,y,w,h,ang,color)
 end
 
 function VIS:DrawBars(amount,start)
-    local lp = self:LPFilter(self.audioData.EnergiesArray,self.bars,amount,start)
+    local lp = Sonus.lib.LowPassFilter(self.audioData.EnergiesArray,self.bars,amount,start)
+    Sonus.lib.Smooth(lp,5)
+
     local width = math.floor(ScrW()/self.bars)
 
     for i,energy in ipairs(lp) do
@@ -121,11 +89,10 @@ VIS.event:on("Draw",function()
     VIS:DrawItems()
 
     VIS.actualMemeFactor = 0.2 * VIS.memeFactor + 0.8 * VIS.actualMemeFactor -- exponential smoothing
-    local powerColor = VIS:GetPowerColor(150,0)
 
     VIS.rectAng = VIS.rectAng + VIS.audioData.TotalEnergy^2 * 50
     if rotatyBox:GetBool() then
-        draw.RotatedBox(ScrW()/2,ScrH()/4,100,100,VIS.rectAng,powerColor)
+        draw.RotatedBox(ScrW()/2,ScrH()/4,100,100,VIS.rectAng,VIS:GetPowerColor(150,0))
 
         draw.SimpleText(string.format("%.3f W/m^2",VIS.audioData.TotalEnergy),"DermaDefault",ScrW()/2,ScrH()/4,Color(255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
     end
@@ -147,20 +114,16 @@ VIS.event:on("Draw",function()
         end
     end
 
-    local powerColor = VIS:GetPowerColor(100,45)
-    surface.SetDrawColor(powerColor)
+    surface.SetDrawColor(VIS:GetPowerColor(100,45))
     VIS:DrawBars(#VIS.audioData.EnergiesArray/4,#VIS.audioData.EnergiesArray*3/4+1)
 
-    local powerColor = VIS:GetPowerColor(150,30)
-    surface.SetDrawColor(powerColor)
+    surface.SetDrawColor(VIS:GetPowerColor(150,30))
     VIS:DrawBars(#VIS.audioData.EnergiesArray/4,#VIS.audioData.EnergiesArray/2+1)
 
-    local powerColor = VIS:GetPowerColor(150,15)
-    surface.SetDrawColor(powerColor)
+    surface.SetDrawColor(VIS:GetPowerColor(150,15))
     VIS:DrawBars(#VIS.audioData.EnergiesArray/4,#VIS.audioData.EnergiesArray/4+1)
 
-    local powerColor = VIS:GetPowerColor(150,0)
-    surface.SetDrawColor(powerColor)
+    surface.SetDrawColor(VIS:GetPowerColor(150,0))
     VIS:DrawBars(#VIS.audioData.EnergiesArray/4,1)
 
     if canShake:GetBool() and (VIS.audioData.TotalEnergy^2*50) > shakeSensitivity:GetFloat() then

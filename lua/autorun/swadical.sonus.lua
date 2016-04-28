@@ -23,6 +23,7 @@ load_cl("sonus/processing/peak_detector.lua")
 load_cl("sonus/processing/circular_buffer.lua")
 load_cl("sonus/processing/eventemitter.lua")
 load_cl("sonus/processing/frequencies.lua")
+load_cl("sonus/processing/filters.lua")
 
 load_cl("sonus/processing/channel_processor.lua")
 
