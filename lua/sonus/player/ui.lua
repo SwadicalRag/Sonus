@@ -107,12 +107,7 @@ function AddURL:DoClick()
         "Enter a valid URL to a soundcloud track or direct media file",
         "",
         function(url)
-            if not Sonus.Soundcloud.GetMetadata(url,function(data)
-                Sonus.Player:AddTrack(Sonus.Soundcloud.AppendClientID(data.stream_url),data.title,data.user.username)
-            end) then
-                -- notification.AddLegacy("Invalid URL!",NOTIFY_ERROR,5)
-                Sonus.Player:AddTrack(url,"Unknown title","Unknown artist")
-            end
+            Sonus.Player:AutoAddURL(url)
         end
     )
 end

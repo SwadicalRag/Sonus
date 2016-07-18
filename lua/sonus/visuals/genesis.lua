@@ -1,3 +1,6 @@
+local VIS = {}
+VIS.event = Sonus.lib.NewEventEmitter()
+
 VIS.items = {}
 VIS.itemSize = 20
 VIS.itemAccel = 0
@@ -130,3 +133,7 @@ VIS.event:on("Draw",function()
         util.ScreenShake(LocalPlayer():GetPos(),5,1,0.1,shakeMagnitude:GetFloat())
     end
 end)
+
+Sonus.Player:RegisterVisualiser("genesis",VIS)
+    :SetName("Genesis")
+    :SetVersion("11.1.6")

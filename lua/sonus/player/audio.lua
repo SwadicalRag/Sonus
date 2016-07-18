@@ -3,18 +3,22 @@ Sonus.Player.event = Sonus.lib.NewEventEmitter()
 
 function Sonus.Player:PlayURL(url,callback)
     callback = callback or function()end
-    sound.PlayURL(url,"noplay noblock",function(station)
+    Sonus.Log("Playing raw media URL...")
+    sound.PlayURL(url,"noplay noblock",function(station,...)
         if IsValid(station) then
+            Sonus.Log("Station creation successful!")
             self:Stop()
             self.ActiveStation = station
             self.ChannelProcessor = Sonus.lib.NewChannelProcessor(station)
             station:SetVolume(self:GetVolume())
             station:Play()
             Sonus.Player.event:emit("Playing")
+            Sonus.Player.event:emit("Play")
 
             callback(true)
         else
-            callback(false)
+            Sonus.Log("Station creation failed!")
+            callback(false,...)
         end
     end)
 end
@@ -23,12 +27,14 @@ function Sonus.Player:Pause()
     if IsValid(Sonus.Player.ActiveStation) then
         Sonus.Player.ActiveStation:Pause()
     end
+    Sonus.Player.event:emit("Pause")
 end
 
 function Sonus.Player:Play()
     if IsValid(Sonus.Player.ActiveStation) then
         Sonus.Player.ActiveStation:Play()
     end
+    Sonus.Player.event:emit("Play")
 end
 
 function Sonus.Player:GetVolume()
@@ -64,6 +70,7 @@ function Sonus.Player:Stop()
     if IsValid(Sonus.Player.ActiveStation) then
         Sonus.Player.ActiveStation:Stop()
     end
+    Sonus.Player.event:emit("Stop")
 end
 
 Sonus.Player.CurrentTrackID = Sonus.Player.CurrentTrackID or 0

@@ -28,7 +28,7 @@ local soundcloudURLs = {
 
 function Sonus.Soundcloud.SearchTracks(query,callback)
     request("https://api.soundcloud.com/tracks.json",{
-        client_id = Sonus.Keys.soundcloud,
+        client_id = Sonus.Config.soundcloudKey,
         q = query
     },function(data)
         local data = util.JSONToTable(data)
@@ -38,7 +38,7 @@ end
 
 function Sonus.Soundcloud.GetMetadataInternal(id,callback)
     request("https://api.soundcloud.com/resolve.json",{
-        client_id = Sonus.Keys.soundcloud,
+        client_id = Sonus.Config.soundcloudKey,
         url = "https://soundcloud.com/"..id
     },function(data)
         local data = util.JSONToTable(data)
@@ -47,7 +47,7 @@ function Sonus.Soundcloud.GetMetadataInternal(id,callback)
 end
 
 function Sonus.Soundcloud.AppendClientID(str)
-    return str.."?client_id="..encode(Sonus.Keys.soundcloud)
+    return str.."?client_id="..encode(Sonus.Config.soundcloudKey)
 end
 
 function Sonus.Soundcloud.GetMetadata(soundcloudURL,callback)

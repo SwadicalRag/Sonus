@@ -5,12 +5,19 @@ function EE:init()
     self.events = {}
 end
 
-function EE:on(event,callback)
+function EE:on(event,meme,callback)
     self.events[event] = self.events[event] or {}
-    self.events[event][#self.events[event] + 1] = {
-        callback = callback,
-        type = "on"
-    }
+    if callback then
+        self.events[event][meme] = {
+            callback = callback,
+            type = "on"
+        }
+    else
+        self.events[event][#self.events[event] + 1] = {
+            callback = meme,
+            type = "on"
+        }
+    end
 end
 
 function EE:once(event,callback)
@@ -25,7 +32,7 @@ function EE:emit(event,...)
     self.events[event] = self.events[event] or {}
 
     local indicesToRemove = {}
-    for i,callbackData in ipairs(self.events[event]) do
+    for i,callbackData in pairs(self.events[event]) do
         local suc = xpcall(callbackData.callback,function(err)
             ErrorNoHalt(err.."\n"..debug.traceback().."\n")
         end,...)

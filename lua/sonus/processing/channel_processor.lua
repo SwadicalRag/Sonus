@@ -9,6 +9,7 @@ function CProc:AnalyseDFT(DFT)
 
     local totalEnergy = 0
 
+    local fqLookup = {}
     local energies,energiesArray = {},{}
     local decibels = {}
 
@@ -23,10 +24,12 @@ function CProc:AnalyseDFT(DFT)
         decibels[frequency] = 10 * math.log(bin^2 / STANDARD_THRESHOLD_OF_HEARING,10)
         energies[frequency] = energy
 
+        fqLookup[#fqLookup + 1] = frequency
+
         totalEnergy = totalEnergy + energy
     end
 
-    return energies,energiesArray,decibels,totalEnergy,10 * math.log(totalEnergy / STANDARD_THRESHOLD_OF_HEARING,10)
+    return fqLookup,energies,energiesArray,decibels,totalEnergy,10 * math.log(totalEnergy / STANDARD_THRESHOLD_OF_HEARING,10)
 end
 
 function CProc:GetEnergyBuffer(category)
@@ -81,7 +84,7 @@ function CProc:Process(sampleSize)
 
     data.DataLength = #data.RawDFT/2
 
-    data.Energies,data.EnergiesArray,data.Decibels,data.TotalEnergy,data.TotalDecibels = self:AnalyseDFT(data.RawDFT)
+    data.FqLookup,data.Energies,data.EnergiesArray,data.Decibels,data.TotalEnergy,data.TotalDecibels = self:AnalyseDFT(data.RawDFT)
 
     data.LeftLevel,data.RightLevel = self.Channel:GetLevel()
     data.AverageLevel = (data.LeftLevel + data.RightLevel) / 2
