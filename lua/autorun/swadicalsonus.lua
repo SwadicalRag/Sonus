@@ -46,7 +46,8 @@ load_cl("sonus/player/visuals.lua")
 load_cl("sonus/player/resolver.lua")
 load_cl("sonus/player/piano.lua")
 
-hook.Add("InitPostEntity","Sonus",function()
+-- hook.Add("InitPostEntity","Sonus",function()
+timer.Simple(1,function()
     load_cl("sonus/player/ui.lua")
 end)
 
