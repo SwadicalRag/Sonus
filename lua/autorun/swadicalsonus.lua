@@ -46,10 +46,13 @@ load_cl("sonus/player/visuals.lua")
 load_cl("sonus/player/resolver.lua")
 load_cl("sonus/player/piano.lua")
 
--- hook.Add("InitPostEntity","Sonus",function()
-timer.Simple(1,function()
+hook.Add("InitPostEntity","Sonus",function()
     load_cl("sonus/player/ui.lua")
 end)
+
+if LOAD_OVERRIDE_SONUS then
+    load_cl("sonus/player/ui.lua")
+end
 
 load_sh("sonus/sh_networking.lua")
 
